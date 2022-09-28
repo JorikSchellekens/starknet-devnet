@@ -5,6 +5,8 @@ A server exposing Starknet functionalities as API endpoints.
 import sys
 import asyncio
 
+from waitress import serve
+from paste.translogger import TransLogger
 from flask import Flask, jsonify
 from flask_cors import CORS
 from gunicorn.app.base import BaseApplication
@@ -101,7 +103,13 @@ def main():
 
     try:
         print(f" * Listening on http://{args.host}:{args.port}/ (Press CTRL+C to quit)")
-        GunicornServer(app, args).run()
+        serve(
+            TransLogger(app),
+            listen=f'{args.host}:{args.port}',
+            channel_timeout=args.timeout,
+            connection_limit=1000
+        )
+
     except KeyboardInterrupt:
         pass
     finally:
