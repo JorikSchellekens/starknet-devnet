@@ -20,11 +20,12 @@ class Account:
     """Account contract wrapper."""
 
     CONTRACT_CLASS: ContractClass = None  # loaded lazily
-    CONTRACT_PATH = "accounts_artifacts/OpenZeppelin/0.4.0b-fork/Account.cairo/Account"
+    CONTRACT_PATH = "accounts_artifacts/OpenZeppelin/starkware/Account"
 
     # Precalculated to save time
-    # HASH = compute_class_hash(contract_class=Account.get_contract_class()))
-    HASH = 250058203962332945652607154704986145054927159797127109843768594742871092378
+    # from starkware.starknet.core.os.class_hash import compute_class_hash
+    # HASH = compute_class_hash(contract_class=Account.get_contract_class())
+    HASH = 3402683751377530443983214567614005351557398466586817795691471859298905028019
     HASH_BYTES = to_bytes(HASH)
 
     def __init__(
@@ -72,7 +73,7 @@ class Account:
         await starknet.state.state.deploy_contract(self.address, Account.HASH_BYTES)
 
         await starknet.state.state.set_storage_at(
-            self.address, get_selector_from_name("Account_public_key"), self.public_key
+            self.address, get_selector_from_name("public_key"), self.public_key
         )
 
         # set initial balance
@@ -98,3 +99,8 @@ class Account:
         await self.starknet_wrapper.store_contract(
             self.address, contract, contract_class
         )
+
+
+from starkware.starknet.core.os.class_hash import compute_class_hash
+HASH = compute_class_hash(contract_class=Account.get_contract_class())
+print(HASH)

@@ -34,6 +34,7 @@ class Accounts:
         return self.list[index]
 
     async def deploy(self):
+        print("DEPLOYING")
         """deploy listed accounts"""
         for account in self.list:
             await account.deploy()
